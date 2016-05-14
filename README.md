@@ -1,5 +1,5 @@
 # IonicBackandStorage
-Ionic starter for backand project with upload image use base64 or Backand Storage
+Ionic starter for backand project with upload image use base64 and Backand Storage
 
 Hello, this is my first try to contribute in backand and ionic, so if there's any lack, please pardon me, 
 and if theres another ways that more simple than this, 
@@ -11,46 +11,46 @@ Create mobile application with ionic and backand.
 
 2 - Use following model in the object tab :
 
-[
-  {
-    "name": "items",
-    "fields": {
-      "name": {
-        "type": "string"
+    [
+      {
+        "name": "items",
+          "fields": {
+          "name": {
+          "type": "string"
+          },
+        "description": {
+          "type": "text"
+          },
+        "avatarBase": {
+          "type": "text"
+          },
+        "bigPictureUrl": {
+          "type": "string"
+          },
+        "user": {
+          "object": "users"
+          }
+        }
       },
-      "description": {
-        "type": "text"
-      },
-      "avatarBase": {
-        "type": "text"
-      },
-      "bigPictureUrl": {
-        "type": "string"
-      },
-      "user": {
-        "object": "users"
+    {
+      "name": "users",
+      "fields": {
+        "email": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "items": {
+          "collection": "items",
+          "via": "user"
+        }
       }
-    }
-  },
-  {
-    "name": "users",
-    "fields": {
-      "email": {
-        "type": "string"
-      },
-      "firstName": {
-        "type": "string"
-      },
-      "lastName": {
-        "type": "string"
-      },
-      "items": {
-        "collection": "items",
-        "via": "user"
       }
-    }
-  }
-]
+    ]
 
 3 - create server side code for uploading bigger image, 
 
@@ -62,22 +62,22 @@ Create mobile application with ionic and backand.
   
   d. write this code in the javascript code field  :
   
-  
-  /* globals
-  $http - Service for AJAX calls 
-  CONSTS - CONSTS.apiUrl for Backands API URL
-  Config - Global Configuration
-  socket - Send realtime database communication
-  files - file handler, performs upload and delete of files
-  request - the current http request
-*/
-
-'use strict';
-
-function backandCallback(userInput, dbRow, parameters, userProfile) {
-
-  console.log(userProfile); // gets the current user role and id that enables you to perform security restrictions
-  
+    
+    /* globals
+    $http - Service for AJAX calls 
+    CONSTS - CONSTS.apiUrl for Backands API URL
+    Config - Global Configuration
+    socket - Send realtime database communication
+    files - file handler, performs upload and delete of files
+    request - the current http request
+    */
+    
+    'use strict';
+    
+    function backandCallback(userInput, dbRow, parameters, userProfile) {
+    
+    console.log(userProfile); // gets the current user role and id that enables you to perform security restrictions
+      
     // upload file
     if (request.method == "POST"){
         var url = files.upload(parameters.filename, parameters.filedata);
@@ -88,8 +88,9 @@ function backandCallback(userInput, dbRow, parameters, userProfile) {
         files.delete(parameters.filename);
         return {};    
     }
-
-}
+    
+    }
+    
   
 for future research see this doc: http://docs.backand.com/en/latest/apidocs/files/index.html
 
