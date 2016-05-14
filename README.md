@@ -97,6 +97,7 @@ for future research see this doc: http://docs.backand.com/en/latest/apidocs/file
 4- To run starter, download zip or run ionic start:
 
 ionic start myApp https://github.com/abdulMuhit/IonicBackandStorage
+
 cd myApp
 
 5 - change application name n token in /js/app.js file to your new application name & token.
