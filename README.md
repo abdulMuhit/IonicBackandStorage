@@ -55,9 +55,13 @@ Create mobile application with ionic and backand.
 3 - create server side code for uploading bigger image, 
 
   a. in the object tab, click items tab, then click again actions tab.
+  
   b. create new on demand execute, name it otherFiles, event trigger = on demand, pick type = server side code.
+  
   c. in the parameters field, write input parameters with : filename, filedata
+  
   d. write this code in the javascript code field  :
+  
   
   /* globals
   $http - Service for AJAX calls 
@@ -67,14 +71,15 @@ Create mobile application with ionic and backand.
   files - file handler, performs upload and delete of files
   request - the current http request
 */
+
 'use strict';
+
 function backandCallback(userInput, dbRow, parameters, userProfile) {
+
   console.log(userProfile); // gets the current user role and id that enables you to perform security restrictions
+  
     // upload file
     if (request.method == "POST"){
-        //var url = 'test';
-        //return {"url": url};
-        
         var url = files.upload(parameters.filename, parameters.filedata);
         return {"url": url};
     }
