@@ -1,14 +1,14 @@
 angular.module('SimpleRESTIonic.controllers', [])
 
-.directive('customOnChange', function() {
-  return {
-    restrict: 'A',
-    link: function (scope, element, attrs) {
-      var onChangeFunc = scope.$eval(attrs.customOnChange);
-      element.bind('change', onChangeFunc);
-    }
-  };
-})
+    .directive('customOnChange', function() {
+        return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+        var onChangeFunc = scope.$eval(attrs.customOnChange);
+        element.bind('change', onChangeFunc);
+            }
+        };
+    })
 
     .controller('LoginCtrl', function (Backand, $state, $rootScope, LoginService) {
         var login = this;
@@ -47,7 +47,7 @@ angular.module('SimpleRESTIonic.controllers', [])
         login.anonymousLogin = anonymousLogin;
     })
 
-    .controller('DashboardCtrl', function (ItemsModel, $rootScope, $scope, $http, Backand) {
+        .controller('DashboardCtrl', function (ItemsModel, $rootScope, $scope) {
         var vm = this;
 
         function goToBackand() {
