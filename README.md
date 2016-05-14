@@ -5,9 +5,9 @@ Hello, this is my first try to contribute in backand and ionic, so if there's an
 and if theres another ways that more simple than this, 
 pls also let me know, n thanks before.
 
-Create mobile application with ionic and backand.
+Create mobile application with http://ionicframework.com/ and backand.
 
-1 - create an acount in backand.com and create new app
+1 - create an account in https://www.backand.com and create new app
 
 2 - Use following model in the object tab :
 
