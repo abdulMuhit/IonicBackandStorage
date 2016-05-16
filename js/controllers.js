@@ -122,10 +122,11 @@ angular.module('SimpleRESTIonic.controllers', [])
                 });
             } else{
                 var compare = object.bigPictureUrlLast.slice(48);    
+                var deleteFileName = object.bigPictureUrl.slice(34);
 
                 if(object.bigPictureName !== compare) {
                   //  console.log('case4 imageLoaded different');
-                    ItemsModel.deleteOldFile(object, compare).then(function(){
+                    ItemsModel.deleteOldFile(object, deleteFileName).then(function(){
                          console.log('last file deleted');
                         ItemsModel.create2(object)
                         .then(function(result){
