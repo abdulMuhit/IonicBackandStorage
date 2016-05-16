@@ -1,14 +1,14 @@
 angular.module('SimpleRESTIonic.controllers', [])
 
-    .directive('customOnChange', function() {
-        return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-        var onChangeFunc = scope.$eval(attrs.customOnChange);
-        element.bind('change', onChangeFunc);
-            }
-        };
-    })
+.directive('customOnChange', function() {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attrs) {
+      var onChangeFunc = scope.$eval(attrs.customOnChange);
+      element.bind('change', onChangeFunc);
+    }
+  };
+})
 
     .controller('LoginCtrl', function (Backand, $state, $rootScope, LoginService) {
         var login = this;
@@ -47,7 +47,7 @@ angular.module('SimpleRESTIonic.controllers', [])
         login.anonymousLogin = anonymousLogin;
     })
 
-        .controller('DashboardCtrl', function (ItemsModel, $rootScope, $scope) {
+    .controller('DashboardCtrl', function (ItemsModel, $rootScope) {
         var vm = this;
 
         function goToBackand() {
@@ -65,11 +65,6 @@ angular.module('SimpleRESTIonic.controllers', [])
             vm.data = null;
         }
 
-        var baseUrl = '/1/objects/',
-            objectName = 'items/';
-            var baseActionUrl = baseUrl + 'action/'        
-            var filesActionName = 'otherFiles';
-
         function create(object) {     
         
             if(object.bigPictureName == "") {
@@ -85,7 +80,6 @@ angular.module('SimpleRESTIonic.controllers', [])
              object.bigPictureUrl = result.data.url;
              ItemsModel.create(object)
                     .then(function(result) {
-                        console.log('create success')
                         cancelCreate();
                         getAll();
                     })
@@ -94,45 +88,69 @@ angular.module('SimpleRESTIonic.controllers', [])
         }
 
     function update(object) {
-        console.log($scope.bigPictureUrlLast);
-        
+        console.log(object);
 
-        if($scope.bigPictureUrlLast == null){
-                    ItemsModel.create2(object)
-                     .then(function(result){
-                        object.bigPictureUrl = result.data.url;
+         if (!object.bigPictureUrlLast) {
+            if(object.bigPictureName) {
+            //    console.log('case1 no last imageLoaded');
+            ItemsModel.create2(object)
+                .then(function(result){
+                    object.bigPictureUrl = result.data.url;
                     ItemsModel.update(object.id, object)
                         .then(function (result) {
-                    cancelEditing();
-                    getAll();
+                        cancelEditing();
+                        getAll();
                 });
-                     })
-        } else if(object.bigPictureName !== $scope.bigPictureUrlLast.slice(34)) {
-        var deleteFileName = $scope.bigPictureUrlLast.slice(34);
-        ItemsModel.deleteOldFile(object, deleteFileName).then(function(){
-                     console.log('last file deleted');
-                     ItemsModel.create2(object)
-                     .then(function(result){
-                        object.bigPictureUrl = result.data.url;
-
-                    ItemsModel.update(object.id, object)
-                        .then(function (result) {
-                    cancelEditing();
-                    getAll();
-                });
-                     })
-                })
-        } else {
+            })        
+            }
+            else {
+              //  console.log('case2 imageLoaded');
             ItemsModel.update(object.id, object)
                 .then(function (result) {
                     cancelEditing();
                     getAll();
                 });
+            }
+        } else {
+
+            if(!object.bigPictureName) {
+            //console.log('case3 imageLast but not update');
+            ItemsModel.update(object.id, object)
+                .then(function (result) {
+                    cancelEditing();
+                    getAll();
+                });
+            } else{
+                var compare = object.bigPictureUrlLast.slice(48);    
+
+                if(object.bigPictureName !== compare) {
+                  //  console.log('case4 imageLoaded different');
+                    ItemsModel.deleteOldFile(object, compare).then(function(){
+                         console.log('last file deleted');
+                        ItemsModel.create2(object)
+                        .then(function(result){
+                            object.bigPictureUrl = result.data.url;
+                        ItemsModel.update(object.id, object)
+                            .then(function (result) {
+                        cancelEditing();
+                        getAll();
+                    });
+                        })
+                    })    
+            } else {
+                //console.log('case5 imageLoaded same');
+            ItemsModel.update(object.id, object)
+                .then(function (result) {
+                    cancelEditing();
+                    getAll();
+                });
+            }
         }
-    }
+    } 
+}
 
         function deleteObject(object) {
-            if(object.bigPictureUrl == "" || object.bigPictureUrl == null) {
+            if(!object.bigPictureUrl || !object.bigPictureUrl) {
                 ItemsModel.delete(object.id)
                 .then(function (result) {
                     cancelEditing();
@@ -141,7 +159,6 @@ angular.module('SimpleRESTIonic.controllers', [])
             } else {
                 var deleteFileName = object.bigPictureUrl.slice(34);
                 ItemsModel.deleteOldFile(object, deleteFileName)
-
                   .then(function(){
                     console.log('file deleted');
                     ItemsModel.delete(object.id)
@@ -154,12 +171,11 @@ angular.module('SimpleRESTIonic.controllers', [])
         }
 
         function initCreateForm() {
-            vm.newObject = {name: '', description: '', avatarBase:'', bigPictureUrl:'', bigPictureBase:'', bigPictureName:''};
+            vm.newObject = {name: '', description: '', avatarBase:'', bigPictureUrl:'', bigPictureBase:'', bigPictureName:'', bigPictureUrlLast:''};
         }
 
         function setEdited(object) {
-            $scope.avatarBaseLast =  object.avatarBase;
-            $scope.bigPictureUrlLast =  object.bigPictureUrl;
+            object.bigPictureUrlLast =  object.bigPictureUrl;
             vm.edited = angular.copy(object);
             vm.isEditing = true;
         }
@@ -178,9 +194,8 @@ angular.module('SimpleRESTIonic.controllers', [])
             vm.isCreating = false;
         }
 
-
-    $scope.uploadFile = function() {
-    var filesSelected = document.getElementById("myFile").files;
+function uploadFile(){
+     var filesSelected = document.getElementById("myFile").files;
     if (filesSelected.length > 0) {
         var fileToLoad = filesSelected[0];
         if (fileToLoad.type.match("image.*") && fileToLoad.size < 100000 )
@@ -201,11 +216,11 @@ angular.module('SimpleRESTIonic.controllers', [])
         } else {
             alert('file is not an image or exceed 1 Mb');
         }
-    }
+    }   
 }
 
-$scope.uploadFile2 = function() {
-    var filesSelected = document.getElementById("myFile2").files;
+function uploadFile2(){
+        var filesSelected = document.getElementById("myFile2").files;
     if (filesSelected.length > 0) {
         var fileToLoad = filesSelected[0];
         console.log(fileToLoad.name);
@@ -230,9 +245,9 @@ $scope.uploadFile2 = function() {
         } else {
             alert('file is not an image');
         }
-    }
+    }    
 }
-        
+
         vm.objects = [];
         vm.edited = null;
         vm.isEditing = false;
@@ -247,6 +262,9 @@ $scope.uploadFile2 = function() {
         vm.cancelCreate = cancelCreate;
         vm.goToBackand = goToBackand;
         vm.isAuthorized = false;
+
+        vm.uploadFile2 = uploadFile2;
+        vm.uploadFile = uploadFile;
 
         $rootScope.$on('authorized', function () {
             vm.isAuthorized = true;
